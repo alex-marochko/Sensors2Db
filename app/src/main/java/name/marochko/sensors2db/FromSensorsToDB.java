@@ -91,6 +91,14 @@ public class FromSensorsToDB extends IntentService implements SensorEventListene
         transaction_flag = false;
         dbHelper.close();
 
+//        stopSelf();
+
+    }
+
+    public void stopService(){
+        Log.d(LOG_TAG, "FromSensorsToDB.stopService()");
+
+
         stopSelf();
 
     }

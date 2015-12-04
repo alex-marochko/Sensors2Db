@@ -1,5 +1,6 @@
 package name.marochko.sensors2db;
 
+import android.app.Application;
 import android.app.Service;
 import android.content.ComponentName;
 import android.content.Intent;
@@ -76,6 +77,7 @@ public class MainActivity extends AppCompatActivity {
         Log.d(LOG_TAG, "MainActivity.onStart");
         super.onStart();
         bindService(intent, sConn, 0);
+        startService(intent);
     }
 
     @Override
@@ -120,17 +122,13 @@ public class MainActivity extends AppCompatActivity {
         btnStartRecording.setEnabled(false);
         btnClearDB.setEnabled(false);
 
-        startService(intent);
-
-//        all_staff.startSensors();
+        all_staff.startSensors();
     }
 
     public void onStopClick(View v){
         Log.d(LOG_TAG, "MainActivity.onStopClick");
 
         all_staff.stopSensors();
-
-
 
         btnStopRecording.setEnabled(false);
         btnStartRecording.setEnabled(true);
@@ -139,6 +137,16 @@ public class MainActivity extends AppCompatActivity {
 //        all_staff.stopService(intent);
 
 //        stopService(intent);
+
+    }
+
+    public void onExitClick(View v){
+
+        Log.d(LOG_TAG, "MainActivity.onExitClick");
+
+        all_staff.stopService();
+        this.finish();
+        System.exit(0);
 
     }
 

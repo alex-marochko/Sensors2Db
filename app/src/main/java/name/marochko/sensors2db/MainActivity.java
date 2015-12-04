@@ -5,6 +5,7 @@ import android.app.Service;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.hardware.Sensor;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.design.widget.FloatingActionButton;
@@ -17,6 +18,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.TextView;
+
+import java.util.LinkedList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -161,6 +165,16 @@ public class MainActivity extends AppCompatActivity {
         Log.d(LOG_TAG, "MainActivity.onClearClick");
 
         all_staff.clearDB();
+
+    }
+
+    public void onShowSensorsListClick(View v){
+
+        List<Sensor> sensorList = new LinkedList<>();
+
+        sensorList = all_staff.loadSensorsList();
+
+        for(Sensor s:sensorList) Log.d(LOG_TAG, s.toString() + '\n');
 
     }
 

@@ -5,6 +5,7 @@ package name.marochko.sensors2db;
  */
 
 import android.app.IntentService;
+import android.app.Notification;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
@@ -21,6 +22,8 @@ import android.os.Binder;
 import android.os.IBinder;
 import android.util.Log;
 import android.view.View;
+
+import java.util.List;
 
 
 public class FromSensorsToDB extends IntentService implements SensorEventListener {
@@ -62,12 +65,11 @@ public class FromSensorsToDB extends IntentService implements SensorEventListene
     public void startSensors(){
         Log.d(LOG_TAG, "FromSensorsToDB.startSensors()");
 
-        mSensorManager = (SensorManager)getSystemService(SENSOR_SERVICE);
         mSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
 
         mSensorManager.registerListener(this, mSensor, SensorManager.SENSOR_DELAY_FASTEST);
 
-        dbHelper = new DBHelper(this);
+//        dbHelper = new DBHelper(this);
         db = dbHelper.getWritableDatabase();
 
         db.beginTransaction();
@@ -98,16 +100,13 @@ public class FromSensorsToDB extends IntentService implements SensorEventListene
     public void stopService(){
         Log.d(LOG_TAG, "FromSensorsToDB.stopService()");
 
-
         stopSelf();
-
     }
 
     public void readDB(){
 
         Log.d(LOG_TAG, "FromSensorsToDB.readDB()");
 
-        dbHelper = new DBHelper(this);
         db = dbHelper.getWritableDatabase();
 
         Cursor c = db.rawQuery("select * from acceleration", null);
@@ -139,12 +138,17 @@ public class FromSensorsToDB extends IntentService implements SensorEventListene
 
     }
 
+    public List<Sensor> loadSensorsList(){
+
+        return mSensorManager.getSensorList(Sensor.TYPE_ALL);
+
+    }
+
 
 
     public void onAccuracyChanged(Sensor sensor, int accuracy){
 
         Log.d(LOG_TAG, "FromSensorsToDB.onAccuracyChanged()");
-
     }
 
 
@@ -191,10 +195,28 @@ public class FromSensorsToDB extends IntentService implements SensorEventListene
 
     }
 
+    protected void startForeground(){
+
+        Log.d(LOG_TAG, "FromSensorsToDB.startForeground()");
+
+        Notification notification = new Notification();
+
+        startForeground(R.mipmap.ic_launcher, notification);
+
+    }
+
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
         Log.d(LOG_TAG, "FromSensorsToDB.onStartCommand");
+
+        startForeground();
+
+        dbHelper = new DBHelper(this);
+
+        mSensorManager = (SensorManager)getSystemService(SENSOR_SERVICE);
+
+
 
 //        startSensors();
 
@@ -237,7 +259,6 @@ public class FromSensorsToDB extends IntentService implements SensorEventListene
             return FromSensorsToDB.this;
         }
     }
-
 
 }
 

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -10,26 +10,38 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="name.marochko.sensors2db.MainActivity"
-    tools:showIn="@layout/activity_main">
+    tools:showIn="@layout/activity_main"
+    android:orientation="vertical"
+    >
 
+    <ListView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:id="@+id/lvSensors"
+        >
+
+
+    </ListView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="0"
+
+        >
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Start"
+        android:text="@string/btnStartRecording"
         android:id="@+id/btnStartRecording"
-        android:layout_centerVertical="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
         android:onClick="onStartClick" />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Stop"
+        android:text="@string/btnStopRecording"
         android:id="@+id/btnStopRecording"
-        android:layout_alignBottom="@+id/btnStartRecording"
-        android:layout_toRightOf="@+id/btnStartRecording"
-        android:layout_toEndOf="@+id/btnStartRecording"
         android:enabled="false"
 
         android:onClick="onStopClick" />
@@ -37,51 +49,48 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Clear"
+        android:text="@string/btnClearDB"
         android:id="@+id/btnClearDB"
-        android:layout_alignBottom="@+id/btnStopRecording"
-        android:layout_toRightOf="@+id/btnStopRecording"
-        android:layout_toEndOf="@+id/btnStopRecording"
         android:onClick="onClearClick" />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Show"
+        android:text="@string/btnShowDB"
         android:id="@+id/btnShowDB"
-        android:layout_below="@+id/btnStartRecording"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginTop="35dp"
         android:onClick="onShowClick" />
+
+        </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="0"
+        >
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Export"
+        android:text="@string/btnExportDB"
         android:id="@+id/btnExportDB"
-        android:layout_below="@+id/btnStopRecording"
-        android:layout_toRightOf="@id/btnShowDB"
-        android:layout_toEndOf="@id/btnShowDB"
-        android:layout_marginTop="35dp"
         android:onClick="onExportDBClick" />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/btnExportDB"
         android:onClick="onExitClick"
         android:id="@+id/btnExit"
-        android:text="Exit"
+        android:text="@string/onExitClick"
         />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_toEndOf="@id/btnExit"
-        android:layout_toRightOf="@id/btnExit"
         android:id="@+id/btnShowSensorsList"
         android:onClick="onShowSensorsListClick"
+        android:text="@string/btnShowSensorsList"
         />
 
-</RelativeLayout>
+    </LinearLayout>
+
+</LinearLayout>

@@ -1,4 +1,14 @@
 <resources>
     <string name="app_name">Sensors2Db</string>
     <string name="action_settings">Settings</string>
+    <string name="btnStartRecording">Start</string>
+    <string name="btnStopRecording">Stop</string>
+    <string name="btnClearDB">Clear DB</string>
+    <string name="btnShowDB">Show</string>
+    <string name="btnExportDB">Export</string>
+
+    <string name="onExitClick">Exit</string>
+    <string name="btnShowSensorsList">Show Sensors List</string>
+
+
 </resources>

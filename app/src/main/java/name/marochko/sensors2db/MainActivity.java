@@ -16,7 +16,9 @@ import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import java.util.LinkedList;
@@ -31,6 +33,10 @@ public class MainActivity extends AppCompatActivity {
     private FromSensorsToDB all_staff;// = new FromSensorsToDB(this);
     private Intent intent;
     ServiceConnection sConn;
+    private ListView lvSensors;
+    private ArrayAdapter<String> adapter;
+
+    int sensorsCount;
 
 
     @Override
@@ -52,6 +58,10 @@ public class MainActivity extends AppCompatActivity {
 
         intent = new Intent(this, FromSensorsToDB.class);
 
+        lvSensors = (ListView)findViewById(R.id.lvSensors);
+        lvSensors.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
+
+
         sConn = new ServiceConnection() {
 
             public void onServiceConnected(ComponentName name, IBinder binder) {
@@ -59,6 +69,14 @@ public class MainActivity extends AppCompatActivity {
                 all_staff = ((FromSensorsToDB.MyBinder) binder).getService();
                 bound = true;
                 Log.d(LOG_TAG, "MainActivity onServiceConnected all_staff: " + all_staff);
+
+                sensorsCount = all_staff.loadSensorsList().size();
+                String[] sensorsNames = new String[sensorsCount];
+                for(int i=0; i<=(sensorsCount-1); i++) sensorsNames[i] = all_staff.loadSensorsList().get(i).getName();
+                adapter = new ArrayAdapter<>(MainActivity.this, android.R.layout.simple_list_item_multiple_choice, sensorsNames);
+                lvSensors.setAdapter(adapter);
+
+
             }
 
             public void onServiceDisconnected(ComponentName name) {
@@ -82,6 +100,15 @@ public class MainActivity extends AppCompatActivity {
         super.onStart();
         bindService(intent, sConn, 0);
         startService(intent);
+
+/*
+        int sensorsCount = all_staff.loadSensorsList().size();
+        String[] sensorsNames = new String[sensorsCount];
+        for(int i=0; i<=sensorsCount; i++) sensorsNames[i] = all_staff.loadSensorsList().get(i).getName();
+        adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, sensorsNames);
+        lvSensors.setAdapter(adapter);
+*/
+
     }
 
     @Override
@@ -177,6 +204,5 @@ public class MainActivity extends AppCompatActivity {
         for(Sensor s:sensorList) Log.d(LOG_TAG, s.toString() + '\n');
 
     }
-
 
 }

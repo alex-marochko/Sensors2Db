@@ -1,7 +1,5 @@
 package name.marochko.sensors2db;
 
-import android.app.Application;
-import android.app.Service;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
@@ -13,9 +11,8 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.util.SparseBooleanArray;
 import android.view.View;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
@@ -37,6 +34,8 @@ public class MainActivity extends AppCompatActivity {
     private ArrayAdapter<String> adapter;
 
     int sensorsCount;
+
+    List<Sensor> sensorsList = new LinkedList<>();
 
 
     @Override
@@ -71,6 +70,8 @@ public class MainActivity extends AppCompatActivity {
                 Log.d(LOG_TAG, "MainActivity onServiceConnected all_staff: " + all_staff);
 
                 sensorsCount = all_staff.loadSensorsList().size();
+                sensorsList = all_staff.loadSensorsList();
+
                 String[] sensorsNames = new String[sensorsCount];
                 for(int i=0; i<=(sensorsCount-1); i++) sensorsNames[i] = all_staff.loadSensorsList().get(i).getName();
                 adapter = new ArrayAdapter<>(MainActivity.this, android.R.layout.simple_list_item_multiple_choice, sensorsNames);
@@ -153,7 +154,7 @@ public class MainActivity extends AppCompatActivity {
         btnStartRecording.setEnabled(false);
         btnClearDB.setEnabled(false);
 
-        all_staff.startSensors();
+        all_staff.startSensors(loadCheckedSensorsList());
     }
 
     public void onStopClick(View v){
@@ -197,11 +198,34 @@ public class MainActivity extends AppCompatActivity {
 
     public void onShowSensorsListClick(View v){
 
-        List<Sensor> sensorList = new LinkedList<>();
 
-        sensorList = all_staff.loadSensorsList();
 
-        for(Sensor s:sensorList) Log.d(LOG_TAG, s.toString() + '\n');
+        for(Sensor s: sensorsList) Log.d(LOG_TAG, s.toString() + '\n');
+
+    }
+
+    private int loadCheckedSensorsList(){
+
+        int selectedSensorsSum = 0;
+
+        SparseBooleanArray sbCheckedArray = lvSensors.getCheckedItemPositions();
+
+        for(int i = 0; i < sbCheckedArray.size(); i++){
+
+            if(sbCheckedArray.get(sbCheckedArray.keyAt(i))) {
+
+                Log.d(LOG_TAG, "sbCheckedArray.size() = " + sbCheckedArray.size());
+
+                Log.d(LOG_TAG, "sbCheckedArray.keyAt(i) = " + sbCheckedArray.keyAt(i));
+                Log.d(LOG_TAG, "sbCheckedArray.keyAt(i+1) = " + sbCheckedArray.keyAt(i+1));
+                Log.d(LOG_TAG, "sensorsList.size()" + sensorsList.size());
+
+//                if(sensorsList.get(sbCheckedArray.keyAt(i)).isWakeUpSensor())
+                selectedSensorsSum |= sensorsList.get(sbCheckedArray.keyAt(i)).getType();
+            }
+        }
+
+        return selectedSensorsSum;
 
     }
 

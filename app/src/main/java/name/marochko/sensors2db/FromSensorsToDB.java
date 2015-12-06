@@ -62,20 +62,26 @@ public class FromSensorsToDB extends IntentService implements SensorEventListene
     }
 
 
+/*
     public void startSensors(){
         Log.d(LOG_TAG, "FromSensorsToDB.startSensors()");
-
         mSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-
         mSensorManager.registerListener(this, mSensor, SensorManager.SENSOR_DELAY_FASTEST);
-
-//        dbHelper = new DBHelper(this);
         db = dbHelper.getWritableDatabase();
-
         db.beginTransaction();
-
         transaction_flag = true;
     }
+*/
+
+    public void startSensors( int sensors){
+        Log.d(LOG_TAG, "FromSensorsToDB.startSensors()");
+        mSensor = mSensorManager.getDefaultSensor(sensors);
+        mSensorManager.registerListener(this, mSensor, SensorManager.SENSOR_DELAY_FASTEST);
+        db = dbHelper.getWritableDatabase();
+        db.beginTransaction();
+        transaction_flag = true;
+    }
+
 
     public void stopSensors(){
 
@@ -109,7 +115,7 @@ public class FromSensorsToDB extends IntentService implements SensorEventListene
 
         db = dbHelper.getWritableDatabase();
 
-        Cursor c = db.rawQuery("select * from acceleration", null);
+        Cursor c = db.rawQuery("select * from sensors_data", null);
         if (c != null) {
             Log.d(LOG_TAG, "Records count = " + c.getCount());
             if (c.moveToFirst()) {
@@ -131,7 +137,7 @@ public class FromSensorsToDB extends IntentService implements SensorEventListene
 
         db = dbHelper.getWritableDatabase();
 
-        db.delete("acceleration", null, null);
+        db.delete("sensors_data", null, null);
 
         dbHelper.close();
 
@@ -167,14 +173,9 @@ public class FromSensorsToDB extends IntentService implements SensorEventListene
         z = event.values[2];
         time = event.timestamp;
 
-/*
-        sensorTextView.setText("x = " + x + "\ny = " + y + "\nz = " + z + "\ncount = " + count
-                + "\ntime = " + time);
-*/
-
-
             contentValues.clear();
 
+            contentValues.put("sens_type", event.sensor.getName());
             contentValues.put("x", x);
             contentValues.put("y", y);
             contentValues.put("z", z);
@@ -182,7 +183,7 @@ public class FromSensorsToDB extends IntentService implements SensorEventListene
 
             Log.d(LOG_TAG, contentValues.getAsString("x"));
 
-            db.insert("acceleration", null, contentValues);
+            db.insert("sensors_data", null, contentValues);
 
             Log.d(LOG_TAG, "record inserted!");
     }
@@ -235,9 +236,9 @@ public class FromSensorsToDB extends IntentService implements SensorEventListene
 
             Log.d(LOG_TAG, "FromSensorsToDB.DBHelper.onCreate");
 
-            db.execSQL("create table acceleration(" +
+            db.execSQL("create table sensors_data(" +
                             "id integer primary key autoincrement," +
-                            "x real, y real, z real, time long" +
+                            "sens_type text, x real, y real, z real, time long" +
                             ");"
             );
         }

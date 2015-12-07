@@ -204,6 +204,12 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    public void onExportDBClick(View v){
+
+        all_staff.exportDB();
+
+    }
+
     private int loadCheckedSensorsList(){
 
         int selectedSensorsSum = 0;
@@ -228,5 +234,7 @@ public class MainActivity extends AppCompatActivity {
         return selectedSensorsSum;
 
     }
+
+
 
 }

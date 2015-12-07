@@ -19,10 +19,18 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Binder;
+import android.os.Environment;
 import android.os.IBinder;
 import android.util.Log;
 import android.view.View;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.List;
 
 
@@ -124,6 +132,71 @@ public class FromSensorsToDB extends IntentService implements SensorEventListene
                 } while (c.moveToNext());
             }
             c.close();
+        }
+
+        dbHelper.close();
+
+
+    }
+
+    public void exportDB(){
+
+        Log.d(LOG_TAG, "exportDB()");
+
+
+
+        final String  DIR_SD = "Sensors2Db";
+        final String  FILENAME_SD = "sensors.csv";
+
+        db = dbHelper.getReadableDatabase();
+
+        // проверяем доступность SD
+        if (!Environment.getExternalStorageState().equals(
+                Environment.MEDIA_MOUNTED)) {
+            Log.d(LOG_TAG, "SD-карта не доступна: " + Environment.getExternalStorageState());
+            return;
+        }
+        // получаем путь к SD
+        File sdPath = Environment.getExternalStorageDirectory();
+        // добавляем свой каталог к пути
+        sdPath = new File(sdPath.getAbsolutePath() + "/" + DIR_SD);
+        // создаем каталог
+        sdPath.mkdirs();
+        // формируем объект File, который содержит путь к файлу
+        File sdFile = new File(sdPath, FILENAME_SD);
+
+        Log.d(LOG_TAG, "File: " + sdFile);
+
+        try{
+
+        FileWriter fw = new FileWriter(sdFile);
+
+            fw.write("id,   sens_type,  x,  y,  z\n");
+
+        Cursor c = db.rawQuery("select * from sensors_data", null);
+        if (c != null) {
+
+            if (c.moveToFirst()) {
+                do {
+                    fw.write(c.getString(c.getColumnIndex("id")) + ",   " +
+
+                            c.getString(c.getColumnIndex("sens_type")) + ",   " +
+                                    c.getString(c.getColumnIndex("x")) + ",   " +
+                                    c.getString(c.getColumnIndex("y")) + ",   " +
+                                    c.getString(c.getColumnIndex("z")) + ",   " +
+                                    c.getString(c.getColumnIndex("time")) + "\n"
+
+                    );
+                } while (c.moveToNext());
+            }
+            fw.close();
+            c.close();
+        }
+
+        }catch (IOException e){
+
+            Log.e(LOG_TAG, "IOException: " + e.getMessage());
+
         }
 
         dbHelper.close();

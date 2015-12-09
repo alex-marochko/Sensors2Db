@@ -27,6 +27,7 @@ import android.view.View;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.security.Timestamp;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -41,7 +42,7 @@ public class FromSensorsToDB extends IntentService implements SensorEventListene
     private DBHelper dbHelper;
     private SQLiteDatabase db;
     private SensorManager mSensorManager;
-    private Sensor mSensor;
+    private Sensor[] mSensor;
     private Context context;
 
     MyBinder binder = new MyBinder();
@@ -81,10 +82,15 @@ public class FromSensorsToDB extends IntentService implements SensorEventListene
     }
 */
 
-    public void startSensors( int sensors){
-        Log.d(LOG_TAG, "FromSensorsToDB.startSensors()");
-        mSensor = mSensorManager.getDefaultSensor(sensors);
-        mSensorManager.registerListener(this, mSensor, SensorManager.SENSOR_DELAY_FASTEST);
+    public void startSensors( int[] sensors){
+
+        mSensor = new Sensor[sensors.length];
+
+        for(int i=0; i<sensors.length; i++) {
+            mSensor[i] = mSensorManager.getDefaultSensor(sensors[i]);
+            mSensorManager.registerListener(this, mSensor[i], SensorManager.SENSOR_DELAY_FASTEST);
+        }
+
         db = dbHelper.getWritableDatabase();
         db.beginTransaction();
         transaction_flag = true;
@@ -171,19 +177,19 @@ public class FromSensorsToDB extends IntentService implements SensorEventListene
 
         FileWriter fw = new FileWriter(sdFile);
 
-            fw.write("id,   sens_type,  x,  y,  z\n");
+            fw.write("id;sens_type;x;y;z;time\n");
 
         Cursor c = db.rawQuery("select * from sensors_data", null);
         if (c != null) {
 
             if (c.moveToFirst()) {
                 do {
-                    fw.write(c.getString(c.getColumnIndex("id")) + ",   " +
+                    fw.write(c.getString(c.getColumnIndex("id")) + ";" +
 
-                            c.getString(c.getColumnIndex("sens_type")) + ",   " +
-                                    c.getString(c.getColumnIndex("x")) + ",   " +
-                                    c.getString(c.getColumnIndex("y")) + ",   " +
-                                    c.getString(c.getColumnIndex("z")) + ",   " +
+                            c.getString(c.getColumnIndex("sens_type")) + ";" +
+                                    c.getString(c.getColumnIndex("x")) + ";" +
+                                    c.getString(c.getColumnIndex("y")) + ";" +
+                                    c.getString(c.getColumnIndex("z")) + ";" +
                                     c.getString(c.getColumnIndex("time")) + "\n"
 
                     );
@@ -238,6 +244,7 @@ public class FromSensorsToDB extends IntentService implements SensorEventListene
         if(!transaction_flag) return;
 
         float x,y,z;
+
 
         count++;
 

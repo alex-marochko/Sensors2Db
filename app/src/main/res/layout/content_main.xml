@@ -11,6 +11,7 @@
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="name.marochko.sensors2db.MainActivity"
     tools:showIn="@layout/activity_main"
+    android:id="@+id/llMainLayout"
     android:orientation="vertical"
     >
 
@@ -18,6 +19,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
+        android:choiceMode="multipleChoice"
         android:id="@+id/lvSensors"
         >
 
@@ -28,68 +30,67 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="0"
+        android:id="@+id/llTop"
 
         >
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/btnStartRecording"
-        android:id="@+id/btnStartRecording"
-        android:onClick="onStartClick" />
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/btnStopRecording"
-        android:id="@+id/btnStopRecording"
-        android:enabled="false"
-
-        android:onClick="onStopClick" />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/btnClearDB"
         android:id="@+id/btnClearDB"
-        android:onClick="onClearClick" />
+        android:onClick="onClearClick"
+        android:layout_weight="1"
+        />
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/btnShowDB"
-        android:id="@+id/btnShowDB"
-        android:onClick="onShowClick" />
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/btnExportDB"
+            android:id="@+id/btnExportDB"
+            android:onClick="onExportDBClick"
+            android:layout_weight="1"
+            />
 
-        </LinearLayout>
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="onExitClick"
+            android:id="@+id/btnExit"
+            android:text="@string/onExitClick"
+            android:layout_weight="1"
+            />
+
+
+    </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="0"
+        android:id="@+id/llBottom"
         >
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/btnExportDB"
-        android:id="@+id/btnExportDB"
-        android:onClick="onExportDBClick" />
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:onClick="onExitClick"
-        android:id="@+id/btnExit"
-        android:text="@string/onExitClick"
-        />
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/btnStartRecording"
+            android:id="@+id/btnStartRecording"
+            android:onClick="onStartClick"
+            android:layout_weight="1"
+            />
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/btnShowSensorsList"
-        android:onClick="onShowSensorsListClick"
-        android:text="@string/btnShowSensorsList"
-        />
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/btnStopRecording"
+            android:id="@+id/btnStopRecording"
+            android:enabled="false"
+            android:onClick="onStopClick"
+            android:layout_weight="1"
+            />
+
 
     </LinearLayout>
 

@@ -40,25 +40,30 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Log.d(LOG_TAG, "MainActivity.onCreate");
+
         super.onCreate(savedInstanceState);
+        Log.d(LOG_TAG, "MainActivity.onCreate");
+        if (savedInstanceState != null) Log.d(LOG_TAG, "savedInstanceState (in OnCreate):\n" + savedInstanceState.toString());
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+/*
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
+
             }
         });
+*/
 
         intent = new Intent(this, FromSensorsToDB.class);
 
         lvSensors = (ListView)findViewById(R.id.lvSensors);
-        lvSensors.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
+//        lvSensors.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
 
 
         sConn = new ServiceConnection() {
@@ -90,7 +95,16 @@ public class MainActivity extends AppCompatActivity {
         btnStartRecording = (Button)findViewById(R.id.btnStartRecording);
         btnStopRecording = (Button)findViewById(R.id.btnStopRecording);
         btnClearDB = (Button)findViewById(R.id.btnClearDB);
-        btnReadDB  = (Button)findViewById(R.id.btnShowDB);
+
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState){
+
+        super.onSaveInstanceState(outState);
+
+        Log.d(LOG_TAG, "onSaveInstanceState:\n" + outState.toString());
+
 
     }
 
@@ -210,11 +224,15 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private int loadCheckedSensorsList(){
+    private int[] loadCheckedSensorsList(){
 
-        int selectedSensorsSum = 0;
+        int[] selectedSensors;
+
+
 
         SparseBooleanArray sbCheckedArray = lvSensors.getCheckedItemPositions();
+
+        selectedSensors = new int[sbCheckedArray.size()];
 
         for(int i = 0; i < sbCheckedArray.size(); i++){
 
@@ -223,15 +241,15 @@ public class MainActivity extends AppCompatActivity {
                 Log.d(LOG_TAG, "sbCheckedArray.size() = " + sbCheckedArray.size());
 
                 Log.d(LOG_TAG, "sbCheckedArray.keyAt(i) = " + sbCheckedArray.keyAt(i));
-                Log.d(LOG_TAG, "sbCheckedArray.keyAt(i+1) = " + sbCheckedArray.keyAt(i+1));
+
                 Log.d(LOG_TAG, "sensorsList.size()" + sensorsList.size());
 
 //                if(sensorsList.get(sbCheckedArray.keyAt(i)).isWakeUpSensor())
-                selectedSensorsSum |= sensorsList.get(sbCheckedArray.keyAt(i)).getType();
+                selectedSensors[i] = sensorsList.get(sbCheckedArray.keyAt(i)).getType();
             }
         }
 
-        return selectedSensorsSum;
+        return selectedSensors;
 
     }
 

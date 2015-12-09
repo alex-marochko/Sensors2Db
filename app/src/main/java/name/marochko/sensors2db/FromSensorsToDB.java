@@ -71,24 +71,13 @@ public class FromSensorsToDB extends IntentService implements SensorEventListene
     }
 
 
-/*
-    public void startSensors(){
-        Log.d(LOG_TAG, "FromSensorsToDB.startSensors()");
-        mSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-        mSensorManager.registerListener(this, mSensor, SensorManager.SENSOR_DELAY_FASTEST);
-        db = dbHelper.getWritableDatabase();
-        db.beginTransaction();
-        transaction_flag = true;
-    }
-*/
-
-    public void startSensors( int[] sensors){
+    public void startSensors( int[] sensors, int sensorsDelay){
 
         mSensor = new Sensor[sensors.length];
 
         for(int i=0; i<sensors.length; i++) {
             mSensor[i] = mSensorManager.getDefaultSensor(sensors[i]);
-            mSensorManager.registerListener(this, mSensor[i], SensorManager.SENSOR_DELAY_FASTEST);
+            mSensorManager.registerListener(this, mSensor[i], sensorsDelay);
         }
 
         db = dbHelper.getWritableDatabase();

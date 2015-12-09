@@ -13,9 +13,11 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import java.util.LinkedList;
@@ -33,15 +35,18 @@ public class MainActivity extends AppCompatActivity {
     private ListView lvSensors;
     private ArrayAdapter<String> adapter;
 
-    int sensorsCount;
+    private int sensorsCount;
+    private int sensorsDelay = 0;
 
     List<Sensor> sensorsList = new LinkedList<>();
 
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(final Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
+
+
         Log.d(LOG_TAG, "MainActivity.onCreate");
         if (savedInstanceState != null) Log.d(LOG_TAG, "savedInstanceState (in OnCreate):\n" + savedInstanceState.toString());
         setContentView(R.layout.activity_main);
@@ -78,10 +83,10 @@ public class MainActivity extends AppCompatActivity {
                 sensorsList = all_staff.loadSensorsList();
 
                 String[] sensorsNames = new String[sensorsCount];
-                for(int i=0; i<=(sensorsCount-1); i++) sensorsNames[i] = all_staff.loadSensorsList().get(i).getName();
+                for (int i = 0; i <= (sensorsCount - 1); i++)
+                    sensorsNames[i] = all_staff.loadSensorsList().get(i).getName();
                 adapter = new ArrayAdapter<>(MainActivity.this, android.R.layout.simple_list_item_multiple_choice, sensorsNames);
                 lvSensors.setAdapter(adapter);
-
 
             }
 
@@ -91,10 +96,36 @@ public class MainActivity extends AppCompatActivity {
             }
         };
 
-
         btnStartRecording = (Button)findViewById(R.id.btnStartRecording);
         btnStopRecording = (Button)findViewById(R.id.btnStopRecording);
         btnClearDB = (Button)findViewById(R.id.btnClearDB);
+
+        // адаптер
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item,
+                getResources().getStringArray(R.array.strArrSensorsDelay));
+
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        Spinner spinner = (Spinner) findViewById(R.id.spinnerSensorsRate);
+        spinner.setAdapter(adapter);
+        // заголовок
+        spinner.setPrompt(getResources().getString(R.string.spinnerSensorsDelayPromt));
+        // выделяем элемент
+        spinner.setSelection(0);
+        // устанавливаем обработчик нажатия
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view,
+                                       int position, long id) {
+                // показываем позиция нажатого элемента
+//                Toast.makeText(getBaseContext(), "Position = " + position, Toast.LENGTH_SHORT).show();
+                sensorsDelay = position;
+            }
+            @Override
+            public void onNothingSelected(AdapterView<?> arg0) {
+            }
+        });
 
     }
 
@@ -168,7 +199,7 @@ public class MainActivity extends AppCompatActivity {
         btnStartRecording.setEnabled(false);
         btnClearDB.setEnabled(false);
 
-        all_staff.startSensors(loadCheckedSensorsList());
+        all_staff.startSensors(loadCheckedSensorsList(), sensorsDelay);
     }
 
     public void onStopClick(View v){

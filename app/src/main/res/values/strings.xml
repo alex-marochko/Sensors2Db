@@ -9,6 +9,15 @@
 
     <string name="onExitClick">Exit</string>
     <string name="btnShowSensorsList">Show Sensors List</string>
+    
+    <string-array name="strArrSensorsDelay">
+        <item>Fastest (SENSOR_DELAY_FASTEST)</item>
+        <item>Fast (SENSOR_DELAY_GAME)</item>
+        <item>Normal (SENSOR_DELAY_UI)</item>
+        <item>Slow (SENSOR_DELAY_NORMAL)</item>
+    </string-array>
+
+    <string name="spinnerSensorsDelayPromt">Sensors delay</string>
 
 
 </resources>

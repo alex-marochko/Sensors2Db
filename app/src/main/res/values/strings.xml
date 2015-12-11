@@ -19,5 +19,7 @@
 
     <string name="spinnerSensorsDelayPromt">Sensors delay</string>
 
+    <string name="textViewSpinner">Choose sensors delay</string>
+
 
 </resources>

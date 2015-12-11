@@ -21,21 +21,41 @@
         android:layout_weight="1"
         android:choiceMode="multipleChoice"
         android:id="@+id/lvSensors"
+
         >
 
 
     </ListView>
+    <ProgressBar
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:indeterminate="true"
+        style="@style/Base.Widget.AppCompat.ProgressBar.Horizontal"
+        android:id="@+id/progressBar"
+        android:fadingEdge="horizontal"
+        />
+
+
+
 
     <Spinner
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/spinnerSensorsRate"
-        android:layout_marginTop="20dp"
-        android:layout_marginBottom="20dp"
+        android:layout_marginBottom="10dp"
         android:padding="20dp"
+
+        style="@style/Widget.AppCompat.Spinner.Underlined"
+        />
+<!--
         android:elevation="4dp"
         android:background="@android:drawable/editbox_dropdown_light_frame"
-        />
+-->
+
+
+
+
+
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -52,6 +72,8 @@
         android:id="@+id/btnClearDB"
         android:onClick="onClearClick"
         android:layout_weight="1"
+
+        style="@style/btnStyleNormal"
         />
 
         <Button
@@ -61,6 +83,7 @@
             android:id="@+id/btnExportDB"
             android:onClick="onExportDBClick"
             android:layout_weight="1"
+            style="@style/btnStyleNormal"
             />
 
         <Button
@@ -70,6 +93,7 @@
             android:id="@+id/btnExit"
             android:text="@string/onExitClick"
             android:layout_weight="1"
+            style="@style/btnStyleNormal"
             />
 
 
@@ -90,6 +114,7 @@
             android:id="@+id/btnStartRecording"
             android:onClick="onStartClick"
             android:layout_weight="1"
+            style="@style/btnStyleHighlighted"
             />
 
         <Button
@@ -100,6 +125,7 @@
             android:enabled="false"
             android:onClick="onStopClick"
             android:layout_weight="1"
+            style="@style/btnStyleHighlighted"
             />
 
 

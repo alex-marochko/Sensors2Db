@@ -1,5 +1,15 @@
 package name.marochko.sensors2db;
 
+
+/**
+ * TODO: Spinner design (and general design)
+ * TODO: writing to CSV in separate thread
+ * TODO: feedback from Service (data writing progress)
+ * TODO: regular commit (about 1 sec)
+ * TODO: interface for Service in status bar
+
+*/
+
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;

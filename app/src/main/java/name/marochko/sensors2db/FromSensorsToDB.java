@@ -44,6 +44,9 @@ public class FromSensorsToDB extends IntentService implements SensorEventListene
     private SensorManager mSensorManager;
     private Sensor[] mSensor;
     private Context context;
+    private int[] activeSensors;
+    private int sensorsDelay;
+
 
     MyBinder binder = new MyBinder();
 
@@ -71,18 +74,30 @@ public class FromSensorsToDB extends IntentService implements SensorEventListene
     }
 
 
-    public void startSensors( int[] sensors, int sensorsDelay){
+    public void startSensors(Intent intent){
 
-        mSensor = new Sensor[sensors.length];
+        Log.d(LOG_TAG, "activeSensors == null ? " + Boolean.toString(activeSensors == null));
 
-        for(int i=0; i<sensors.length; i++) {
-            mSensor[i] = mSensorManager.getDefaultSensor(sensors[i]);
+        int[] activeSensors = new int[intent.getIntExtra("sensors count", 0)];
+
+        for(int i=0; i<activeSensors.length;i++)
+            activeSensors[i] = intent.getIntExtra("sensor " + Integer.toString(i), 0);
+
+        mSensor = new Sensor[activeSensors.length];
+
+        mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
+
+        for(int i=0; i<activeSensors.length; i++) {
+            mSensor[i] =
+                    mSensorManager.getDefaultSensor(activeSensors[i]);
             mSensorManager.registerListener(this, mSensor[i], sensorsDelay);
         }
 
         db = dbHelper.getWritableDatabase();
         db.beginTransaction();
         transaction_flag = true;
+
+        Log.d(LOG_TAG, "StartSensors thread " + Thread.currentThread());
     }
 
 
@@ -93,6 +108,8 @@ public class FromSensorsToDB extends IntentService implements SensorEventListene
         mSensorManager.unregisterListener(this);
 
         Log.d(LOG_TAG, "FromSensorsToDB.stopSensors()- unregisterListener ");
+
+        Log.d(LOG_TAG, "StopSensors thread " + Thread.currentThread());
 
         db.setTransactionSuccessful();
 
@@ -278,17 +295,42 @@ public class FromSensorsToDB extends IntentService implements SensorEventListene
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
+        String intentAction = intent.getStringExtra("action");
+
         Log.d(LOG_TAG, "FromSensorsToDB.onStartCommand");
+        Log.d(LOG_TAG, "Intent.action = " + intentAction);
 
         startForeground();
 
-        dbHelper = new DBHelper(this);
+        switch(intentAction) {
 
-        mSensorManager = (SensorManager)getSystemService(SENSOR_SERVICE);
+            case "prepare":
+                Log.d(LOG_TAG, "Switch - case Prepare");
+                dbHelper = new DBHelper(this);
+                mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
+                break;
+            case "startSensors":
+                Log.d(LOG_TAG, "Switch - case startSensors");
+//                Log.d(LOG_TAG, "switch activeSensors " + Boolean.toString(FromSensorsToDB.this.activeSensors == null));
+
+                dbHelper = new DBHelper(this);
 
 
+                startSensors(intent);
+                break;
+            case "exportDB":
+                break;
+            case "stopSensors":
+                stopSensors();
+                break;
+            case "clearDB":
+                clearDB();
+                break;
 
 //        startSensors();
+
+
+        }
 
 
 
@@ -328,6 +370,18 @@ public class FromSensorsToDB extends IntentService implements SensorEventListene
             Log.d(LOG_TAG, "MyBinder.getService()");
             return FromSensorsToDB.this;
         }
+    }
+
+    public void setActiveSensors(int[] activeSensors, int sensorsDelay){
+
+
+
+        this.activeSensors = new int[activeSensors.length];
+        this.activeSensors = activeSensors.clone();
+        this.sensorsDelay = sensorsDelay;
+
+        Log.d(LOG_TAG, "setActiveSensors() activeSensors " + activeSensors.toString());
+        Log.d(LOG_TAG, "setActiveSensors() " + this.activeSensors.toString() + Boolean.toString(this.activeSensors == null));
     }
 
 }

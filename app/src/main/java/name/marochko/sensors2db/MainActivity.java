@@ -155,6 +155,7 @@ public class MainActivity extends AppCompatActivity {
         Log.d(LOG_TAG, "MainActivity.onStart");
         super.onStart();
         bindService(intent, sConn, 0);
+        intent.putExtra("action", "prepare");
         startService(intent);
 
 /*
@@ -209,7 +210,19 @@ public class MainActivity extends AppCompatActivity {
         btnStartRecording.setEnabled(false);
         btnClearDB.setEnabled(false);
 
-        all_staff.startSensors(loadCheckedSensorsList(), sensorsDelay);
+        int[] sensors = loadCheckedSensorsList().clone();
+
+//        all_staff.setActiveSensors(loadCheckedSensorsList(), sensorsDelay);
+
+        intent.putExtra("action", "startSensors");
+        intent.putExtra("sensors count", sensors.length);
+        for(int i = 0; i<sensors.length; i++)
+            intent.putExtra("sensor " + Integer.toString(i), sensors[i]);
+
+        all_staff.startService(intent);
+
+//        all_staff.startSensors(loadCheckedSensorsList(), sensorsDelay);
+
     }
 
     public void onStopClick(View v){
@@ -253,15 +266,15 @@ public class MainActivity extends AppCompatActivity {
 
     public void onShowSensorsListClick(View v){
 
-
-
         for(Sensor s: sensorsList) Log.d(LOG_TAG, s.toString() + '\n');
 
     }
 
-    public void onExportDBClick(View v){
+    public void onExportDBClick(View v) {
 
-        all_staff.exportDB();
+        intent.putExtra("action", "exportDB");
+
+//        all_staff.exportDB();
 
     }
 
@@ -293,7 +306,5 @@ public class MainActivity extends AppCompatActivity {
         return selectedSensors;
 
     }
-
-
 
 }

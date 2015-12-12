@@ -4,14 +4,12 @@ package name.marochko.sensors2db;
  * This class reads sensors and writes data to database
  */
 
-import android.app.IntentService;
 import android.app.Notification;
+import android.app.Service;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.hardware.Sensor;
@@ -22,20 +20,14 @@ import android.os.Binder;
 import android.os.Environment;
 import android.os.IBinder;
 import android.util.Log;
-import android.view.View;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.security.Timestamp;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.List;
 
 
-public class FromSensorsToDB extends IntentService implements SensorEventListener {
+public class FromSensorsToDB extends Service implements SensorEventListener {
 
     private final String LOG_TAG ="marinfo";
 
@@ -53,22 +45,6 @@ public class FromSensorsToDB extends IntentService implements SensorEventListene
 
     ContentValues contentValues = new ContentValues();
 
-    public FromSensorsToDB(Context context){
-        super("myService");
-        this.context = context;
-
-        Log.d(LOG_TAG, "constructor FromSensorsToDB(Context context), context = " + context);
-    }
-
-    public FromSensorsToDB(String name){
-        super(name);
-        Log.d(LOG_TAG, "FromSensorsToDB(String name)");
-    }
-
-    public FromSensorsToDB(){
-        super("myService");
-        Log.d(LOG_TAG, "FromSensorsToDB()");
-    }
 
 
     public void startSensors( int[] sensors, int sensorsDelay){
@@ -258,12 +234,6 @@ public class FromSensorsToDB extends IntentService implements SensorEventListene
     }
 
 
-    @Override
-    protected void onHandleIntent(Intent intent) {
-
-        Log.d(LOG_TAG, "FromSensorsToDB.onHandleIntent()");
-
-    }
 
     protected void startForeground(){
 

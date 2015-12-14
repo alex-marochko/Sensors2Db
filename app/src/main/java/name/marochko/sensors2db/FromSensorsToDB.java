@@ -20,6 +20,7 @@ import android.os.Binder;
 import android.os.Environment;
 import android.os.IBinder;
 import android.util.Log;
+import android.widget.Toast;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -30,6 +31,8 @@ import java.util.List;
 public class FromSensorsToDB extends Service implements SensorEventListener {
 
     private final String LOG_TAG ="marinfo";
+
+    private final long PERIOD_FOR_REGULAR_COMMIT = 1_000_000_000; //one second (in nanoseconds)
 
     private DBHelper dbHelper;
     private SQLiteDatabase db;
@@ -42,6 +45,7 @@ public class FromSensorsToDB extends Service implements SensorEventListener {
     private boolean transaction_flag = false;
     int count = 0;
     long time = 0;
+    long previousTimestamp = time;
 
     ContentValues contentValues = new ContentValues();
 
@@ -114,29 +118,25 @@ public class FromSensorsToDB extends Service implements SensorEventListener {
 
         Log.d(LOG_TAG, "exportDB()");
 
-
-
         final String  DIR_SD = "Sensors2Db";
         final String  FILENAME_SD = "sensors.csv";
 
         db = dbHelper.getReadableDatabase();
 
-        // проверяем доступность SD
         if (!Environment.getExternalStorageState().equals(
                 Environment.MEDIA_MOUNTED)) {
-            Log.d(LOG_TAG, "SD-карта не доступна: " + Environment.getExternalStorageState());
+            Log.d(LOG_TAG, "SD-card is not available: " + Environment.getExternalStorageState());
             return;
         }
-        // получаем путь к SD
+
         File sdPath = Environment.getExternalStorageDirectory();
-        // добавляем свой каталог к пути
         sdPath = new File(sdPath.getAbsolutePath() + "/" + DIR_SD);
-        // создаем каталог
+
         sdPath.mkdirs();
-        // формируем объект File, который содержит путь к файлу
         File sdFile = new File(sdPath, FILENAME_SD);
 
         Log.d(LOG_TAG, "File: " + sdFile);
+
 
         try{
 
@@ -163,6 +163,8 @@ public class FromSensorsToDB extends Service implements SensorEventListener {
             fw.close();
             c.close();
         }
+
+            Toast.makeText(getApplicationContext(), "CSV file is saved to " + sdFile, Toast.LENGTH_LONG).show();
 
         }catch (IOException e){
 
@@ -208,15 +210,17 @@ public class FromSensorsToDB extends Service implements SensorEventListener {
 
         if(!transaction_flag) return;
 
-        float x,y,z;
+        time = event.timestamp;
+        if(previousTimestamp == 0)previousTimestamp = time;
 
+        float x,y,z;
 
         count++;
 
         x = event.values[0];
         y = event.values[1];
         z = event.values[2];
-        time = event.timestamp;
+
 
             contentValues.clear();
 
@@ -231,17 +235,29 @@ public class FromSensorsToDB extends Service implements SensorEventListener {
             db.insert("sensors_data", null, contentValues);
 
             Log.d(LOG_TAG, "record inserted!");
+
+//            Log.d(LOG_TAG, "Checking commit conditions: " + (previousTimestamp!=0)+  " and " + ((time - previousTimestamp)>PERIOD_FOR_REGULAR_COMMIT));
+
+
+
+            if((previousTimestamp!=0) & ((time - previousTimestamp)>PERIOD_FOR_REGULAR_COMMIT)){
+
+                //if PERIOD_FOR_REGULAR_COMMIT expired then commit and start new transaction:
+                db.setTransactionSuccessful();
+                db.endTransaction();
+                db.beginTransaction();
+                previousTimestamp = time;
+//                Log.d(LOG_TAG, "Commit");
+            }
     }
-
-
 
     protected void startForeground(){
 
         Log.d(LOG_TAG, "FromSensorsToDB.startForeground()");
-
         Notification notification = new Notification();
 
-        startForeground(R.mipmap.ic_launcher, notification);
+
+        startForeground(R.drawable.sensors2db, notification);
 
     }
 

@@ -26,6 +26,7 @@
 
 
     </ListView>
+<!--
     <ProgressBar
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -34,6 +35,7 @@
         android:id="@+id/progressBar"
         android:fadingEdge="horizontal"
         />
+-->
 
 
 
@@ -47,10 +49,6 @@
 
         style="@style/Widget.AppCompat.Spinner.Underlined"
         />
-<!--
-        android:elevation="4dp"
-        android:background="@android:drawable/editbox_dropdown_light_frame"
--->
 
 
 

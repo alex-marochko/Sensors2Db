@@ -5,7 +5,7 @@ package name.marochko.sensors2db;
  * TODO: Spinner design (and general design)
  * TODO: writing to CSV in separate thread
  * TODO: feedback from Service (data writing progress)
- * TODO: regular commit (about 1 sec)
+ * DONE: regular commit (about 1 sec)
  * TODO: interface for Service in status bar
 
 */
@@ -16,8 +16,6 @@ import android.content.ServiceConnection;
 import android.hardware.Sensor;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -38,7 +36,7 @@ public class MainActivity extends AppCompatActivity {
     final String LOG_TAG = "marinfo";
     private boolean bound;
     private TextView sensorTextView;
-    private Button btnStartRecording, btnStopRecording, btnClearDB, btnReadDB;
+    private Button btnStartRecording, btnStopRecording, btnClearDB, btnExit, btnExport;
     private FromSensorsToDB all_staff;// = new FromSensorsToDB(this);
     private Intent intent;
     ServiceConnection sConn;
@@ -109,8 +107,10 @@ public class MainActivity extends AppCompatActivity {
         btnStartRecording = (Button)findViewById(R.id.btnStartRecording);
         btnStopRecording = (Button)findViewById(R.id.btnStopRecording);
         btnClearDB = (Button)findViewById(R.id.btnClearDB);
+        btnExit = (Button)findViewById(R.id.btnExit);
+        btnExport = (Button)findViewById(R.id.btnExportDB);
 
-        // адаптер
+
 
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item,
                 getResources().getStringArray(R.array.strArrSensorsDelay));
@@ -119,17 +119,16 @@ public class MainActivity extends AppCompatActivity {
 
         Spinner spinner = (Spinner) findViewById(R.id.spinnerSensorsRate);
         spinner.setAdapter(adapter);
-        // заголовок
+
         spinner.setPrompt(getResources().getString(R.string.spinnerSensorsDelayPromt));
-        // выделяем элемент
+
         spinner.setSelection(0);
-        // устанавливаем обработчик нажатия
+
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view,
                                        int position, long id) {
-                // показываем позиция нажатого элемента
-//                Toast.makeText(getBaseContext(), "Position = " + position, Toast.LENGTH_SHORT).show();
+
                 sensorsDelay = position;
             }
             @Override
@@ -156,14 +155,6 @@ public class MainActivity extends AppCompatActivity {
         super.onStart();
         bindService(intent, sConn, 0);
         startService(intent);
-
-/*
-        int sensorsCount = all_staff.loadSensorsList().size();
-        String[] sensorsNames = new String[sensorsCount];
-        for(int i=0; i<=sensorsCount; i++) sensorsNames[i] = all_staff.loadSensorsList().get(i).getName();
-        adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, sensorsNames);
-        lvSensors.setAdapter(adapter);
-*/
 
     }
 
@@ -208,6 +199,8 @@ public class MainActivity extends AppCompatActivity {
         btnStopRecording.setEnabled(true);
         btnStartRecording.setEnabled(false);
         btnClearDB.setEnabled(false);
+        btnExport.setEnabled(false);
+        btnExit.setEnabled(false);
 
         all_staff.startSensors(loadCheckedSensorsList(), sensorsDelay);
     }
@@ -220,10 +213,8 @@ public class MainActivity extends AppCompatActivity {
         btnStopRecording.setEnabled(false);
         btnStartRecording.setEnabled(true);
         btnClearDB.setEnabled(true);
-
-//        all_staff.stopService(intent);
-
-//        stopService(intent);
+        btnExport.setEnabled(true);
+        btnExit.setEnabled(true);
 
     }
 
